@@ -27,7 +27,7 @@ import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody} from "./ty
 // import {VideoUpdateModelBody, VideoUpdateModelParams} from "../models/videoUpdateModel";
 //
 
-//
+//once upon a tine
  app.use(express.json());
  app.use('/blogs', blogRoute)
 
