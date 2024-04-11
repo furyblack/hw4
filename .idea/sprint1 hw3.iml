@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/auth" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/db" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/middlewares" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/repositories" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/routes" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/types" />
+      <excludeFolder url="file://$MODULE_DIR$/dist/validators" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
