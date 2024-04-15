@@ -1,12 +1,9 @@
-
 import * as dotenv from "dotenv";
-import {BlogOutputType, BlogMongoDbType} from "../types/blogs/output";
-import {VideoDbType} from "../types/videos/output";
+import { BlogMongoDbType} from "../types/blogs/output";
 
-import {PostOutputType, PostMongoDbType} from "../types/posts/output";
+
+import { PostMongoDbType} from "../types/posts/output";
 import {Collection, MongoClient} from "mongodb";
-
-
 
 //пытаюсь подключить бд
 

@@ -1,16 +1,11 @@
-
 import {app} from "./settings";
 import {connectMongo} from "./db/db";
 import dotenv from 'dotenv'
 
 
-
-
 //const jsonBodyMiddleware = bodyParser.json()
 dotenv.config()
 const port= process.env.PORT as string
-
-
 
     app.listen(port, async ()=>{
         await connectMongo()

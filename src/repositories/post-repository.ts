@@ -20,6 +20,7 @@ export class PostMapper{
 }
 
 export class PostRepository{
+    //TODO вынести мапинг в квери репу
     static async createPost(postParams: CreateNewPostType): Promise<PostOutputType | null>{
         const targetBlog = await BlogRepository.getById(postParams.blogId)
         if (!targetBlog){
