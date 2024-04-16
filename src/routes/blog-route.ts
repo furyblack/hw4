@@ -4,11 +4,9 @@ import {blogValidation} from "../validators/blog-validators";
 import {BlogRepository} from "../repositories/blog-repository";
 import {RequestWithBody, RequestWithParamsAndBody} from "../types/common";
 import {CreateNewBlogType, CreateNewPostType, UpdateBlogType} from "../types/blogs/input";
-import {BlogMongoDbType, BlogOutputType} from "../types/blogs/output";
+import { BlogOutputType} from "../types/blogs/output";
 import {ObjectId} from "mongodb";
 import {PostOutputType} from "../types/posts/output";
-import {PostRepository} from "../repositories/post-repository";
-import {postValidation} from "../validators/post-validators";
 import {BlogsService} from "../domain/blogs-service";
 
 
@@ -17,9 +15,9 @@ export const blogRoute = Router({});
 
 blogRoute.post('/', authMiddleware, blogValidation(), async (req: RequestWithBody<CreateNewBlogType>, res: Response<BlogOutputType>) => {
     const {name, description, websiteUrl}: CreateNewBlogType = req.body
-    const addResult: BlogOutputType = await BlogRepository.createBlog({name, description, websiteUrl})
+    const newBlog= await BlogsService.createBlog({name, description, websiteUrl})
 
-    res.status(201).send(addResult)
+    res.status(201).send(newBlog)
 })
 
 
@@ -42,7 +40,7 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
 })
 
 blogRoute.get('/', async (res: Response<BlogOutputType[]>) => {
-    const blogsPromise = await BlogRepository.getAll()
+    const blogsPromise = await BlogsService.getAll()
     res.send(blogsPromise)
 })
 
@@ -59,7 +57,7 @@ blogRoute.put('/:id', authMiddleware, blogValidation(), async (req: Request, res
     }
     const blogId = req.params.id
 
-    const doesBlogExist = await BlogRepository.getById(blogId);
+    const doesBlogExist = await BlogsService.getById(blogId);
 
     if (!doesBlogExist) return res.sendStatus(404);
 
@@ -73,7 +71,7 @@ blogRoute.put('/:id', authMiddleware, blogValidation(), async (req: Request, res
 
 blogRoute.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
 
-    const isDeleted = await BlogRepository.deleteBlog(req.params.id)
+    const isDeleted = await BlogsService.deleteBlog(req.params.id)
     if (isDeleted) {
         res.sendStatus(204)
     } else {
@@ -87,7 +85,7 @@ blogRoute.get('/:id', async (req: Request, res: Response) => {
         res.sendStatus(404)
         return
     }
-    const blog = await BlogRepository.getById(req.params.id)
+    const blog = await BlogsService.getById(req.params.id)
     if (blog) {
         res.status(200).send(blog)
     } else {
