@@ -74,7 +74,7 @@ static async createPostToBlog(data: CreateNewPostType) {
 }
 
 
-// копия кода из blog repository
+// копия кода из blog repository ( рефакторим)
 
 
 export class BlogMapper {
