@@ -8,7 +8,7 @@ import { BlogOutputType} from "../types/blogs/output";
 import {ObjectId} from "mongodb";
 import {PostOutputType} from "../types/posts/output";
 import {BlogsService} from "../domain/blogs-service";
-
+import {QueryBlogRepository} from "../repositories/query-blog-repository";
 
 export const blogRoute = Router({});
 
@@ -42,7 +42,7 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
 
 
 blogRoute.get('/', async (req:Request, res: Response<BlogOutputType[]>) => {
-    const blogsPromise = await BlogsService.getAll()
+    const blogsPromise = await QueryBlogRepository.getAll()
     res.send(blogsPromise)
 })
 
@@ -59,7 +59,7 @@ blogRoute.put('/:id', authMiddleware, blogValidation(), async (req: Request, res
     }
     const blogId = req.params.id
 
-    const doesBlogExist = await BlogsService.getById(blogId);
+    const doesBlogExist = await QueryBlogRepository.getById(blogId);
 
     if (!doesBlogExist) return res.sendStatus(404);
 
@@ -87,7 +87,7 @@ blogRoute.get('/:id', async (req: Request, res: Response) => {
         res.sendStatus(404)
         return
     }
-    const blog = await BlogsService.getById(req.params.id)
+    const blog = await QueryBlogRepository.getById(req.params.id)
     if (blog) {
         res.status(200).send(blog)
     } else {
@@ -99,11 +99,10 @@ blogRoute.get('/:id', async (req: Request, res: Response) => {
 blogRoute.get('/:blogId/posts', async (req: Request, res: Response) => {
     const blogId = req.params.blogId
     if (!ObjectId.isValid(blogId)) {
-        console.log(ObjectId)
         res.sendStatus(404)
         return
     }
-    const blog = await BlogsService.getByIdPostForBlog(blogId)
+    const blog = await QueryBlogRepository.getByIdPostForBlog(blogId)
     if (blog) {
         res.status(200).send(blog)
     } else {
