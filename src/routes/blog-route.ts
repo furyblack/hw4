@@ -34,12 +34,14 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
 
     // Отправляем успешный ответ с созданным постом
     if (!newPost) return res.sendStatus(404)
-    res.status(201).json(newPost);
+    res.status(201).send(newPost);
     return
 
 })
 
-blogRoute.get('/', async (res: Response<BlogOutputType[]>) => {
+
+
+blogRoute.get('/', async (req:Request, res: Response<BlogOutputType[]>) => {
     const blogsPromise = await BlogsService.getAll()
     res.send(blogsPromise)
 })
@@ -86,6 +88,22 @@ blogRoute.get('/:id', async (req: Request, res: Response) => {
         return
     }
     const blog = await BlogsService.getById(req.params.id)
+    if (blog) {
+        res.status(200).send(blog)
+    } else {
+        res.sendStatus(404)
+    }
+})
+
+
+blogRoute.get('/:blogId/posts', async (req: Request, res: Response) => {
+    const blogId = req.params.blogId
+    if (!ObjectId.isValid(blogId)) {
+        console.log(ObjectId)
+        res.sendStatus(404)
+        return
+    }
+    const blog = await BlogsService.getByIdPostForBlog(blogId)
     if (blog) {
         res.status(200).send(blog)
     } else {

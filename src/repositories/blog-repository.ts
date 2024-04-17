@@ -1,7 +1,9 @@
-import {blogCollection} from "../db/db";
+import {blogCollection, postCollection} from "../db/db";
 import {CreateNewBlogType, UpdateBlogType} from "../types/blogs/input";
 import {BlogOutputType, BlogMongoDbType} from "../types/blogs/output";
 import {ObjectId, WithId} from "mongodb";
+import {PostMongoDbType, PostOutputType} from "../types/posts/output";
+import {PostMapper} from "./post-repository";
 
 export class BlogMapper {
     static toDto(blog: WithId<BlogMongoDbType>):BlogOutputType{
@@ -23,6 +25,15 @@ export class BlogRepository{
          }
          return BlogMapper.toDto(blog)
      }
+
+     // get by ID для конкретного поста под блогом
+    static async getByIdPostForBlog(blogId: string):Promise<PostOutputType | null> {
+        const post: WithId<PostMongoDbType> | null = await postCollection.findOne({id: new ObjectId(blogId)})
+        if (!post){
+            return null
+        }
+        return PostMapper.toDto(post)
+    }
 
 
     static async getAll():Promise<BlogOutputType[]> {

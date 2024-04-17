@@ -1,8 +1,8 @@
-import {PostOutputType} from "../types/posts/output";
-import {PostRepository} from "../repositories/post-repository";
+import {PostMongoDbType, PostOutputType} from "../types/posts/output";
+import {PostMapper, PostRepository} from "../repositories/post-repository";
 import {CreateNewPostType} from "../types/posts/input";
 import {BlogRepository} from "../repositories/blog-repository";
-import {blogCollection} from "../db/db";
+import {blogCollection, postCollection} from "../db/db";
 import {CreateNewBlogType, UpdateBlogType} from "../types/blogs/input";
 import {BlogOutputType, BlogMongoDbType} from "../types/blogs/output";
 import {ObjectId, WithId} from "mongodb";
@@ -39,6 +39,15 @@ static async createPostToBlog(data: CreateNewPostType) {
             return null
         }
         return BlogMapper.toDto(blog)
+    }
+
+    // get by ID для конкретного поста
+    static async getByIdPostForBlog(blogId: string):Promise<PostOutputType[] | null> {
+        const posts: WithId<PostMongoDbType>[] | null = await postCollection.find({blogId: blogId}).toArray()
+        if (!posts){
+            return null
+        }
+        return posts.map((post)=> PostMapper.toDto(post))
     }
 
 
