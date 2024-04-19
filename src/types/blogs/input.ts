@@ -15,3 +15,11 @@ export type CreateNewPostType = {
     "shortDescription": string,
     "content": string
 }
+
+export type blogQuerySortData = {
+    pageSize?: number,
+    pageNumber?: number,
+    sortBy?: string,
+    sortDirection?: string,
+    searchNameTerm?: string,
+}

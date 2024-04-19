@@ -2,14 +2,14 @@ import {Router, Response, Request} from "express";
 import {authMiddleware} from "../middlewares/auth/auth-middleware";
 import {blogValidation} from "../validators/blog-validators";
 import {BlogRepository} from "../repositories/blog-repository";
-import {RequestWithBody, RequestWithParamsAndBody} from "../types/common";
-import {CreateNewBlogType, CreateNewPostType, UpdateBlogType} from "../types/blogs/input";
-import { BlogOutputType} from "../types/blogs/output";
-import {ObjectId} from "mongodb";
+import {RequestWithBody, RequestWithParamsAndBody, RequestWithQuery} from "../types/common";
+import {blogQuerySortData, CreateNewBlogType, CreateNewPostType, UpdateBlogType} from "../types/blogs/input";
+import {BlogOutputType, blogSortData} from "../types/blogs/output";
+import {ObjectId, SortDirection} from "mongodb";
 import {PostOutputType} from "../types/posts/output";
 import {BlogsService} from "../domain/blogs-service";
 import {QueryBlogRepository} from "../repositories/query-blog-repository";
-
+import {BlogMongoDbType} from "../types/blogs/output";
 
 export const blogRoute = Router({});
 
@@ -41,10 +41,22 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
 
 
 
-blogRoute.get('/', async (req:Request, res: Response<BlogOutputType[]>) => {
-    const pageSize = req.query.pageSize ? +req.query.pageSize : 10
-    const pageNumber = req.query.pageNumber ? +req.query.pageNumber: 1
-    const blogsPromise = await QueryBlogRepository.getAll(pageSize, pageNumber)
+
+function paginator(query: blogQuerySortData):blogSortData {
+    const pageSize = query.pageSize ? +query.pageSize : 10
+    const pageNumber = query.pageNumber ? +query.pageNumber: 1
+    const sortBy = query.sortBy ? query.sortBy as string: 'createdAt'
+    const sortDirection = query.sortDirection ? query.sortDirection  : 'desc'
+    const searchNameTerm = query.searchNameTerm ? query.searchNameTerm as string: null
+    return  {
+        pageSize,pageNumber,sortBy,sortDirection, searchNameTerm
+    }
+}
+
+blogRoute.get('/', async (req:RequestWithQuery<blogQuerySortData>, res: Response<BlogOutputType[]>) => {
+    const paginationData = paginator(req.query)
+
+    const blogsPromise = await QueryBlogRepository.getAll(paginationData)
     res.send(blogsPromise)
 })
 

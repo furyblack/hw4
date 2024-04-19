@@ -13,3 +13,11 @@ export type BlogMongoDbType =  {
     "websiteUrl": string,
     "createdAt": Date
 }
+
+export type blogSortData = {
+    pageSize: number,
+    pageNumber: number,
+    sortBy: string,
+    sortDirection: string,
+    searchNameTerm: string | null,
+}

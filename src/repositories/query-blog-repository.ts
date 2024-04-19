@@ -1,9 +1,10 @@
-import {BlogMongoDbType, BlogOutputType} from "../types/blogs/output";
-import {ObjectId, WithId} from "mongodb";
+import {BlogMongoDbType, BlogOutputType, blogSortData} from "../types/blogs/output";
+import {ObjectId, SortDirection, WithId} from "mongodb";
 import {blogCollection, postCollection} from "../db/db";
 import {BlogMapper} from "./blog-repository";
 import {PostMongoDbType, PostOutputType} from "../types/posts/output";
 import {PostMapper} from "./post-repository";
+
 
 
 export class QueryBlogRepository{
@@ -32,9 +33,22 @@ return posts.map((post) => PostMapper.toDto(post))
 }
 // 1) передать page number
     //2) Посчитать скип
-static async getAll(pageSize:number, pageNumber:number):Promise<BlogOutputType[]> {
+
+
+    // const filter = {
+    //      ...blogId,
+    //      _id: {$in: [new ObjectId(someStringId), ...]}
+    //      ...search,
+    // }
+
+static async getAll(sortData: blogSortData):Promise<BlogOutputType[]> {
+    const {pageSize, pageNumber, sortBy, sortDirection, searchNameTerm} = sortData
+    const search = searchNameTerm
+        ? {name: {$regex: searchNameTerm, $options: 'i'}}
+        : {}
     const  blog = await blogCollection
-        .find({})
+        .find(search)
+        .sort(sortBy, sortDirection as SortDirection) //был вариант(sortBy as keyof BlogOutputType, sortDirection as SortDirection))
         .limit(pageSize)
         .skip((pageNumber - 1) * pageSize)
         .toArray()

@@ -13,6 +13,7 @@ app.use('/blogs', blogRoute)
 app.delete('/testing/all-data', async (req:Request, res: Response)=>{
     await blogCollection.deleteMany({})
     await postCollection.deleteMany({})
+    console.log('123123')
     res.sendStatus(204)
 })
 
