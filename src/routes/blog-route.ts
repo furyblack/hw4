@@ -10,8 +10,8 @@ import {PostOutputType} from "../types/posts/output";
 import {BlogsService} from "../domain/blogs-service";
 import {QueryBlogRepository} from "../repositories/query-blog-repository";
 
-export const blogRoute = Router({});
 
+export const blogRoute = Router({});
 
 blogRoute.post('/', authMiddleware, blogValidation(), async (req: RequestWithBody<CreateNewBlogType>, res: Response<BlogOutputType>) => {
     const {name, description, websiteUrl}: CreateNewBlogType = req.body
@@ -42,7 +42,9 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
 
 
 blogRoute.get('/', async (req:Request, res: Response<BlogOutputType[]>) => {
-    const blogsPromise = await QueryBlogRepository.getAll()
+    const pageSize = req.query.pageSize ? +req.query.pageSize : 10
+    const pageNumber = req.query.pageNumber ? +req.query.pageNumber: 1
+    const blogsPromise = await QueryBlogRepository.getAll(pageSize, pageNumber)
     res.send(blogsPromise)
 })
 
@@ -97,15 +99,21 @@ blogRoute.get('/:id', async (req: Request, res: Response) => {
 
 
 blogRoute.get('/:blogId/posts', async (req: Request, res: Response) => {
-    const blogId = req.params.blogId
+    const blogId = req.params.blogId; // Используйем req.params.blogId для получения значения blogId
     if (!ObjectId.isValid(blogId)) {
-        res.sendStatus(404)
-        return
+        res.sendStatus(404);
+        return;
     }
-    const blog = await QueryBlogRepository.getByIdPostForBlog(blogId)
-    if (blog) {
-        res.status(200).send(blog)
-    } else {
-        res.sendStatus(404)
+    try {
+        const posts = await QueryBlogRepository.getAllPostsForBlog(blogId);
+        if (posts!.length > 0) {
+            res.status(200).send(posts);
+        } else {
+            res.sendStatus(404);
+        }
+    } catch (error) {
+        console.error('Error fetching posts for blog:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 })
+

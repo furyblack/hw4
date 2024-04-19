@@ -8,8 +8,6 @@ import {PostMapper} from "./post-repository";
 
 export class QueryBlogRepository{
 
-
-
 static async getById(id: string):Promise<BlogOutputType | null> {
     const blog: WithId<BlogMongoDbType> | null = await blogCollection.findOne({_id: new ObjectId(id)})
 if (!blog){
@@ -19,22 +17,31 @@ return BlogMapper.toDto(blog)
 }
 
 // get by ID для конкретного поста
-static async getByIdPostForBlog(blogId: string):Promise<PostOutputType[] | null> {
+static async getAllPostsForBlog(blogId: string):Promise<PostOutputType[] | null> {
     const posts: WithId<PostMongoDbType>[] | null = await postCollection.find({blogId: blogId}).toArray()
 if (!posts){
     return null
 }
+
+// static async getAll(title: string | null | undefined):Promise<PostOutputType[]> {
+//         const posts  = await postCollection.find({}).toArray()
+//         return posts.map(post => PostMapper.toDto(post))
+//     }
+
 return posts.map((post) => PostMapper.toDto(post))
 }
-
-static async getAll():Promise<BlogOutputType[]> {
-    const  blog = await blogCollection.find({}).toArray()
+// 1) передать page number
+    //2) Посчитать скип
+static async getAll(pageSize:number, pageNumber:number):Promise<BlogOutputType[]> {
+    const  blog = await blogCollection
+        .find({})
+        .limit(pageSize)
+        .skip((pageNumber - 1) * pageSize)
+        .toArray()
     return blog.map(b=>BlogMapper.toDto(b))
 
     }
 }
-
-
 
 
    // формирование фильтра (может быть вынесено во вспомогательный метод)
