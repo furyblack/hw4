@@ -4,7 +4,7 @@ import {blogCollection, postCollection} from "../db/db";
 import {BlogMapper} from "./blog-repository";
 import {PostMongoDbType, PostOutputType} from "../types/posts/output";
 import {PostMapper} from "./post-repository";
-import {body, validationResult, query, param} from 'express-validator'
+
 
 export class QueryBlogRepository{
 
@@ -33,3 +33,44 @@ static async getAll():Promise<BlogOutputType[]> {
 
     }
 }
+
+
+
+
+   // формирование фильтра (может быть вынесено во вспомогательный метод)
+//         const byId = blogId
+//           ? {blogId: new ObjectId(blogId)}
+//           : {}
+//         const search = query.searchNameTerm
+//           ? {title: {$regex: query.searchNameTerm, $options: 'i'}}
+//           : {}
+//         const filter = {
+//             // ...byId,
+//             // _id: {$in: [new ObjectId(someStringId), ...]}
+//             // ...search,
+//         }
+//
+//         try {
+//              // собственно запрос в бд (может быть вынесено во вспомогательный метод)
+//             const items = await postCollection
+//                 .find(filter)
+//                 .sort(query.sortBy, query.sortDirection)
+//                 .skip((query.pageNumber - 1) * query.pageSize)
+//                 .limit(query.pageSize)
+//                 .toArray() as any[] /*SomePostType[]*/
+//
+// // подсчёт элементов (может быть вынесено во вспомогательный метод)
+// const totalCount = await postCollection.countDocuments(filter)
+//
+// // формирование ответа в нужном формате (может быть вынесено во вспомогательный метод)
+// return {
+//     pagesCount: Math.ceil(totalCount / query.pageSize),
+//     page: query.pageNumber,
+//     pageSize: query.pageSize,
+//     totalCount,
+//     items: items.map(this.mapToOutput)
+// }
+// } catch (e) {
+//     console.log(e)
+//     return {error: 'some error'}
+// }

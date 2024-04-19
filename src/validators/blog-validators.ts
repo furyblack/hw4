@@ -1,5 +1,6 @@
-import {body} from "express-validator"
+import {body, validationResult, query, param} from "express-validator"
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
+
 
 const nameValidator = body('name').isString().withMessage('Name must be a string').trim().isLength({
     min: 1,
@@ -18,3 +19,17 @@ const websitUrlValidator = body('websiteUrl').isString().withMessage('WebsiteUrl
 ).withMessage('Incorrect websieUrl')
 
 export const blogValidation = () =>[nameValidator, descriptionValidator, websitUrlValidator, inputValidationMiddleware]
+
+
+/*
+
+// варианты задания дефолтных значений
+return {
+        pageNumber: query.pageNumber ? +query.pageNumber : 1,
+        pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
+        sortBy: query.sortBy ? query.sortBy : 'createdAt',
+        sortDirection: query.sortDirection ? query.sortDirection as SortDirection : 'desc',
+        searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null,
+    }
+
+ */
