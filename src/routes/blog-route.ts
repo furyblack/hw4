@@ -4,12 +4,13 @@ import {blogValidation} from "../validators/blog-validators";
 import {BlogRepository} from "../repositories/blog-repository";
 import {RequestWithBody, RequestWithParamsAndBody, RequestWithQuery} from "../types/common";
 import {blogQuerySortData, CreateNewBlogType, CreateNewPostType, UpdateBlogType} from "../types/blogs/input";
-import {BlogOutputType, blogSortData} from "../types/blogs/output";
+import {BlogOutputType, blogSortData, PaginationOutputType} from "../types/blogs/output";
 import {ObjectId, SortDirection} from "mongodb";
 import {PostOutputType} from "../types/posts/output";
 import {BlogsService} from "../domain/blogs-service";
 import {QueryBlogRepository} from "../repositories/query-blog-repository";
-import {BlogMongoDbType} from "../types/blogs/output";
+import {paginator} from "../types/paginator/pagination";
+
 
 export const blogRoute = Router({});
 
@@ -42,18 +43,9 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
 
 
 
-function paginator(query: blogQuerySortData):blogSortData {
-    const pageSize = query.pageSize ? +query.pageSize : 10
-    const pageNumber = query.pageNumber ? +query.pageNumber: 1
-    const sortBy = query.sortBy ? query.sortBy as string: 'createdAt'
-    const sortDirection = query.sortDirection ? query.sortDirection  : 'desc'
-    const searchNameTerm = query.searchNameTerm ? query.searchNameTerm as string: null
-    return  {
-        pageSize,pageNumber,sortBy,sortDirection, searchNameTerm
-    }
-}
 
-blogRoute.get('/', async (req:RequestWithQuery<blogQuerySortData>, res: Response<BlogOutputType[]>) => {
+
+blogRoute.get('/', async (req:RequestWithQuery<blogQuerySortData>, res: Response<PaginationOutputType<BlogOutputType>>) => {
     const paginationData = paginator(req.query)
 
     const blogsPromise = await QueryBlogRepository.getAll(paginationData)

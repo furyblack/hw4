@@ -14,3 +14,10 @@ export type UpdatePostType= {
 
 }
 
+export type postQuerySortData = {
+    pageSize?: number,
+    pageNumber?: number,
+    sortBy?: string,
+    sortDirection?: string,
+    searchNameTerm?: string,
+}

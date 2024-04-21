@@ -21,3 +21,11 @@ export type blogSortData = {
     sortDirection: string,
     searchNameTerm: string | null,
 }
+
+export type PaginationOutputType<I> = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount:  number,
+    items: I[]
+}

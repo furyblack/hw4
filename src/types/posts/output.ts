@@ -19,3 +19,10 @@ export type PostMongoDbType =  {
     "blogName": string,
     "createdAt": Date
 }
+export type postSortData = {
+    pageSize: number,
+    pageNumber: number,
+    sortBy: string,
+    sortDirection: string,
+    searchNameTerm: string | null,
+}

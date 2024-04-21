@@ -1,15 +1,26 @@
-import {PostMongoDbType, PostOutputType} from "../types/posts/output";
-import {postCollection} from "../db/db";
+import {PostMongoDbType, PostOutputType, postSortData} from "../types/posts/output";
+import { postCollection} from "../db/db";
 import {PostMapper} from "../domain/posts-service";
+import {BlogOutputType, blogSortData} from "../types/blogs/output";
+import {SortDirection} from "mongodb";
 
 
 
+export class QueryPostRepository {
 
-export class QueryBlogRepository {
+    static async getAll(sortData: postSortData):Promise<PostOutputType[]> {
+        const {pageSize, pageNumber, sortBy, sortDirection, searchNameTerm} = sortData
+        const search = searchNameTerm
+            ? {title: {$regex: searchNameTerm, $options: 'i'}}
+            : {}
+        const  post = await postCollection
+            .find(search)
+            .sort(sortBy, sortDirection as SortDirection)
+            .limit(pageSize)
+            .skip((pageNumber - 1) * pageSize)
+            .toArray()
+        return post.map(p =>PostMapper.toDto(p))
 
-    static async getAll(title: string | null | undefined): Promise<PostOutputType[]> {
-        const posts = await postCollection.find({}).toArray()
-        return posts.map(post => PostMapper.toDto(post))
     }
 
 
