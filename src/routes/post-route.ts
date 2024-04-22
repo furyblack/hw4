@@ -1,5 +1,5 @@
 import {authMiddleware} from "../middlewares/auth/auth-middleware";
-import {RequestWithBody} from "../types/common";
+import {RequestWithBody, RequestWithQuery} from "../types/common";
 import {Request, Response, Router} from "express";
 import {PostOutputType, postSortData} from "../types/posts/output";
 import {CreateNewPostType, postQuerySortData, UpdatePostType} from "../types/posts/input";
@@ -7,6 +7,7 @@ import {PostRepository} from "../repositories/post-repository";
 import {postValidation} from "../validators/post-validators";
 import {QueryPostRepository} from "../repositories/query-post-repository";
 import {paginator} from "../types/paginator/pagination";
+import {PaginationOutputType} from "../types/blogs/output";
 
 
 export const postRoute = Router({})
@@ -23,7 +24,7 @@ postRoute.post('/', authMiddleware, postValidation(), async (req: RequestWithBod
 
 
 
-postRoute.get('/', async (req: Request, res: Response<PostOutputType[]> ) =>{
+postRoute.get('/', async (req: RequestWithQuery<postQuerySortData>, res: Response<PaginationOutputType<PostOutputType>> ) =>{
     const paginationData = paginator(req.query)
     const posts=  await QueryPostRepository.getAll(paginationData)
     res.send(posts)

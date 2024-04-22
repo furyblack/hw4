@@ -2,7 +2,7 @@ import {Router, Response, Request} from "express";
 import {authMiddleware} from "../middlewares/auth/auth-middleware";
 import {blogValidation} from "../validators/blog-validators";
 import {BlogRepository} from "../repositories/blog-repository";
-import {RequestWithBody, RequestWithParamsAndBody, RequestWithQuery} from "../types/common";
+import {RequestWithBody, RequestWithParamsAndBody, RequestWithQuery, RequestWithQueryAndParams} from "../types/common";
 import {blogQuerySortData, CreateNewBlogType, CreateNewPostType, UpdateBlogType} from "../types/blogs/input";
 import {BlogOutputType, blogSortData, PaginationOutputType} from "../types/blogs/output";
 import {ObjectId, SortDirection} from "mongodb";
@@ -10,6 +10,7 @@ import {PostOutputType} from "../types/posts/output";
 import {BlogsService} from "../domain/blogs-service";
 import {QueryBlogRepository} from "../repositories/query-blog-repository";
 import {paginator} from "../types/paginator/pagination";
+import {postForBlogValidation, postValidation} from "../validators/post-validators";
 
 
 export const blogRoute = Router({});
@@ -24,7 +25,7 @@ blogRoute.post('/', authMiddleware, blogValidation(), async (req: RequestWithBod
 
 // Роут для создания нового поста для конкретного блога
 // TODO Добавить валидацию
-blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAndBody<{
+blogRoute.post('/:blogId/posts', authMiddleware, postForBlogValidation(), async (req: RequestWithParamsAndBody<{
     blogId: string
 }, CreateNewPostType>, res: Response<PostOutputType>) => {
 
@@ -32,7 +33,7 @@ blogRoute.post('/:blogId/posts', authMiddleware, async (req: RequestWithParamsAn
     const {blogId} = req.params;
     const {title, shortDescription, content} = req.body;
     const newPost = await BlogsService.createPostToBlog({title, shortDescription, content, blogId})
-
+    console.log(newPost)
     // Отправляем успешный ответ с созданным постом
     if (!newPost) return res.sendStatus(404)
     res.status(201).send(newPost);
@@ -102,15 +103,17 @@ blogRoute.get('/:id', async (req: Request, res: Response) => {
 })
 
 
-blogRoute.get('/:blogId/posts', async (req: Request, res: Response) => {
+blogRoute.get('/:blogId/posts', async (req:RequestWithQueryAndParams<{blogId: string},blogQuerySortData>, res: Response) => {
     const blogId = req.params.blogId; // Используйем req.params.blogId для получения значения blogId
+    const paginationData = paginator(req.query)
+
     if (!ObjectId.isValid(blogId)) {
         res.sendStatus(404);
         return;
     }
     try {
-        const posts = await QueryBlogRepository.getAllPostsForBlog(blogId);
-        if (posts!.length > 0) {
+        const posts = await QueryBlogRepository.getAllPostsForBlog(blogId,paginationData);
+        if (posts!.items.length > 0) {
             res.status(200).send(posts);
         } else {
             res.sendStatus(404);

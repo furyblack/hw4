@@ -32,5 +32,6 @@ export const postIdValidator = body('blogId').isString().custom  (async (value:s
 ).withMessage('Incorrect PostId')
 
 export const postValidation = () =>[titleValidator, shortDescriptionValidator, contentValidator, postIdValidator, inputValidationMiddleware]
+export const postForBlogValidation = () =>[titleValidator, shortDescriptionValidator, contentValidator, inputValidationMiddleware]
 
 

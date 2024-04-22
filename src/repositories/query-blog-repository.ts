@@ -5,6 +5,7 @@ import {BlogMapper} from "./blog-repository";
 import {PostMongoDbType, PostOutputType} from "../types/posts/output";
 import {PostMapper} from "./post-repository";
 import request from "supertest";
+import {postValidation} from "../validators/post-validators";
 
 
 export class QueryBlogRepository {
@@ -18,14 +19,30 @@ export class QueryBlogRepository {
     }
 
 // get by ID для конкретного поста
-    static async getAllPostsForBlog(blogId: string): Promise<PostOutputType[] | null> {
-        const posts: WithId<PostMongoDbType>[] | null = await postCollection.find({blogId: blogId}).toArray()
-        if (!posts) {
-            return null
+    //TODO perenesti v post qvery repo
+    static async getAllPostsForBlog(blogId: string,sortData: blogSortData): Promise<PaginationOutputType<PostOutputType>> {
+        const {pageSize, pageNumber, sortBy, sortDirection, searchNameTerm} = sortData
+        const search = {blogId: blogId}
+        const blog = await postCollection
+            .find(search)
+            .sort(sortBy, sortDirection as SortDirection) //был вариант(sortBy as keyof BlogOutputType, sortDirection as SortDirection))
+            .limit(pageSize)
+            .skip((pageNumber - 1) * pageSize)
+            .toArray()
+
+
+        // подсчёт элементов (может быть вынесено во вспомогательный метод)
+        const totalCount = await postCollection.countDocuments(search)
+
+        return {
+
+            pagesCount: Math.ceil(totalCount / pageSize),
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount,
+            items: blog.map(b => PostMapper.toDto(b))
         }
 
-
-        return posts.map((post) => PostMapper.toDto(post))
     }
 
 
