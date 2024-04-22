@@ -2,10 +2,8 @@ import {BlogMongoDbType, BlogOutputType, blogSortData, PaginationOutputType} fro
 import {ObjectId, SortDirection, WithId} from "mongodb";
 import {blogCollection, postCollection} from "../db/db";
 import {BlogMapper} from "./blog-repository";
-import {PostMongoDbType, PostOutputType} from "../types/posts/output";
+import {PostOutputType} from "../types/posts/output";
 import {PostMapper} from "./post-repository";
-import request from "supertest";
-import {postValidation} from "../validators/post-validators";
 
 
 export class QueryBlogRepository {

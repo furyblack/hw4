@@ -10,11 +10,6 @@ export type UpdateBlogType= {
     "websiteUrl": string
 }
 
-export type CreateNewPostType = {
-    "title": string,
-    "shortDescription": string,
-    "content": string
-}
 
 export type blogQuerySortData = {
     pageSize?: number,

@@ -1,7 +1,7 @@
 import {PostMongoDbType, PostOutputType, postSortData} from "../types/posts/output";
 import { postCollection} from "../db/db";
 import {PostMapper} from "../domain/posts-service";
-import {BlogOutputType, blogSortData, PaginationOutputType} from "../types/blogs/output";
+import {PaginationOutputType} from "../types/blogs/output";
 import {SortDirection} from "mongodb";
 
 

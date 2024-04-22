@@ -1,7 +1,6 @@
 import { postCollection} from "../db/db";
 import {CreateNewPostType, UpdatePostType} from "../types/posts/input";
 import {PostOutputType, PostMongoDbType} from "../types/posts/output";
-
 import * as crypto from "crypto";
 import {PostRepository} from "../repositories/post-repository";
 import {BlogRepository} from "../repositories/blog-repository";
@@ -42,8 +41,6 @@ export class PostService{
 
         return PostMapper.toDto(newPost)
     }
-
-
 
 
     static async  updatePost(postId: string,  updateData:UpdatePostType): Promise<boolean | null>{
