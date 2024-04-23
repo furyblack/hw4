@@ -1,9 +1,8 @@
-import {blogCollection, postCollection} from "../db/db";
+import {blogCollection} from "../db/db";
 import {CreateNewBlogType, UpdateBlogType} from "../types/blogs/input";
 import {BlogOutputType, BlogMongoDbType} from "../types/blogs/output";
 import {ObjectId, WithId} from "mongodb";
-import {PostMongoDbType, PostOutputType} from "../types/posts/output";
-import {PostMapper} from "./post-repository";
+
 
 export class BlogMapper {
     static toDto(blog: WithId<BlogMongoDbType>): BlogOutputType {
@@ -19,33 +18,10 @@ export class BlogMapper {
 }
 
 export class BlogRepository {
-    static async getById(id: string): Promise<BlogOutputType | null> {
-        const blog: WithId<BlogMongoDbType> | null = await blogCollection.findOne({_id: new ObjectId(id)})
-        if (!blog) {
-            return null
-        }
-        return BlogMapper.toDto(blog)
-    }
 
-    // get by ID для конкретного поста под блогом
-    static async getByIdPostForBlog(blogId: string): Promise<PostOutputType | null> {
-        const post: WithId<PostMongoDbType> | null = await postCollection.findOne({id: new ObjectId(blogId)})
-        if (!post) {
-            return null
-        }
-        return PostMapper.toDto(post)
-    }
-
-
-    static async getAll(): Promise<BlogOutputType[]> {
-        const blog = await blogCollection.find({}).toArray()
-        return blog.map(b => BlogMapper.toDto(b))
-
-    }
 
     static async createBlog(blogParams: CreateNewBlogType): Promise<BlogOutputType> {
         const newBlog: BlogMongoDbType = {
-            // _id: crypto.randomUUID(),
             name: blogParams.name,
             description: blogParams.description,
             websiteUrl: blogParams.websiteUrl,
@@ -64,7 +40,6 @@ export class BlogRepository {
         return !!updatedCount;
 
     }
-
 
     static async deleteBlog(id: string): Promise<boolean> {
         try {

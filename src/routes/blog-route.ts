@@ -11,7 +11,7 @@ import {BlogsService} from "../domain/blogs-service";
 import {QueryBlogRepository} from "../repositories/query-blog-repository";
 import {paginator} from "../types/paginator/pagination";
 import {postForBlogValidation} from "../validators/post-validators";
-import {CreateNewPostType} from "../types/posts/input";
+import {CreateNewPostForBlogType} from "../types/posts/input";
 
 
 export const blogRoute = Router({});
@@ -71,7 +71,7 @@ blogRoute.post('/', authMiddleware, blogValidation(), async (req: RequestWithBod
 
 blogRoute.post('/:blogId/posts', authMiddleware, postForBlogValidation(), async (req: RequestWithParamsAndBody<{
     blogId: string
-}, CreateNewPostType>, res: Response<PostOutputType>) => {
+}, CreateNewPostForBlogType>, res: Response<PostOutputType>) => {
 
     // Извлекаем параметры и тело запроса из запроса
     const {blogId} = req.params;

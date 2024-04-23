@@ -2,10 +2,9 @@ import {PostOutputType} from "../types/posts/output";
 import {PostRepository} from "../repositories/post-repository";
 import {CreateNewPostType} from "../types/posts/input";
 import {BlogRepository} from "../repositories/blog-repository";
-import {blogCollection} from "../db/db";
-import {CreateNewBlogType, UpdateBlogType} from "../types/blogs/input";
+import {CreateNewBlogType} from "../types/blogs/input";
 import {BlogOutputType} from "../types/blogs/output";
-import {ObjectId} from "mongodb";
+
 
 
 export class BlogsService {
@@ -35,23 +34,8 @@ export class BlogsService {
     }
 
 
-    static async updateBlog(blogId: string, updateData: UpdateBlogType): Promise<boolean> {
-
-        const updateResult = await blogCollection.updateOne({_id: new ObjectId(blogId)}, {$set: {...updateData}})
-        const updatedCount = updateResult.modifiedCount
-        return !!updatedCount;
-
-    }
-
-
     static async deleteBlog(id: string): Promise<boolean> {
-        try {
-            const result = await blogCollection.deleteOne({_id: new ObjectId(id)});
-            return result.deletedCount === 1;
-        } catch (error) {
-            console.error("Error deleting blog:", error);
-            return false;
-        }
+        return await BlogRepository.deleteBlog(id)
     }
 
 }

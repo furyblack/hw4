@@ -17,7 +17,7 @@ export class QueryBlogRepository {
     }
 
 // get by ID для конкретного поста
-    //TODO perenesti v post qvery repo
+
     static async getAllPostsForBlog(blogId: string,sortData: blogSortData): Promise<PaginationOutputType<PostOutputType>> {
         const {pageSize, pageNumber, sortBy, sortDirection, searchNameTerm} = sortData
         const search = {blogId: blogId}

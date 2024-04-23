@@ -1,4 +1,4 @@
-import {body, validationResult, query, param} from "express-validator"
+import {body} from "express-validator"
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
 
 
@@ -12,12 +12,12 @@ const descriptionValidator = body('description').isString().withMessage('Descrip
     max: 500
 }).withMessage('Incorrect description')
 
-const websitUrlValidator = body('websiteUrl').isString().withMessage('WebsiteUrl must be a string').trim().isLength({
+const websiteUrlValidator = body('websiteUrl').isString().withMessage('WebsiteUrl must be a string').trim().isLength({
     min: 1,
     max: 100
 }).matches( 'https:\\/\\/([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
-).withMessage('Incorrect websieUrl')
+).withMessage('Incorrect websiteUrl')
 
-export const blogValidation = () =>[nameValidator, descriptionValidator, websitUrlValidator, inputValidationMiddleware]
+export const blogValidation = () =>[nameValidator, descriptionValidator, websiteUrlValidator, inputValidationMiddleware]
 
 

@@ -1,8 +1,9 @@
 import { postCollection} from "../db/db";
 import {CreateNewPostType, UpdatePostType} from "../types/posts/input";
 import {PostOutputType, PostMongoDbType} from "../types/posts/output";
-import {BlogRepository} from "./blog-repository";
 import * as crypto from "crypto";
+import {QueryPostRepository} from "./query-post-repository";
+import {QueryBlogRepository} from "./query-blog-repository";
 
 
 export class PostMapper{
@@ -22,7 +23,7 @@ export class PostMapper{
 export class PostRepository{
     //TODO вынести мапинг в квери репу
     static async createPost(postParams: CreateNewPostType): Promise<PostOutputType | null>{
-        const targetBlog = await BlogRepository.getById(postParams.blogId)
+        const targetBlog = await QueryBlogRepository.getById(postParams.blogId)
         if (!targetBlog){
             return null
         }
@@ -41,26 +42,15 @@ export class PostRepository{
         return PostMapper.toDto(newPost)
     }
 
-    static async getById(id: string):Promise<PostOutputType | null> {
-        const post: PostMongoDbType | null = await postCollection.findOne({_id: id})
-        if(!post){
-            return null
-        }
-        return PostMapper.toDto(post)
-    }
 
-    static async getAll(title: string | null | undefined):Promise<PostOutputType[]> {
-        const posts  = await postCollection.find({}).toArray()
-        return posts.map(post => PostMapper.toDto(post))
-    }
     static async  updatePost(postId: string,  updateData:UpdatePostType): Promise<boolean | null>{
-       const post = await PostRepository.getById(postId)
+       const post = await QueryPostRepository.getById(postId)
         if(!post){
             return null
         }
         const updateResult = await postCollection.updateOne({_id:postId}, {$set:{...updateData}})
         const updatedCount = updateResult.modifiedCount
-        if (!updatedCount){
+        if(!updatedCount){
             return false
         }
         return true
