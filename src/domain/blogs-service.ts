@@ -5,8 +5,6 @@ import {BlogRepository} from "../repositories/blog-repository";
 import {CreateNewBlogType} from "../types/blogs/input";
 import {BlogOutputType} from "../types/blogs/output";
 
-
-
 export class BlogsService {
 
 //TODO после создания пост сервиса вернуться сюда

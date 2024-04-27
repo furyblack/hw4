@@ -57,7 +57,6 @@ export class QueryBlogRepository {
             .toArray()
 
 
-        // подсчёт элементов (может быть вынесено во вспомогательный метод)
         const totalCount = await blogCollection.countDocuments(search)
 
         return {

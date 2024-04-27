@@ -19,7 +19,6 @@ export class BlogMapper {
 
 export class BlogRepository {
 
-
     static async createBlog(blogParams: CreateNewBlogType): Promise<BlogOutputType> {
         const newBlog: BlogMongoDbType = {
             name: blogParams.name,
@@ -50,7 +49,6 @@ export class BlogRepository {
             return false;
         }
     }
-
 
 }
 
